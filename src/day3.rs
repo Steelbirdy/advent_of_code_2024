@@ -1,5 +1,3 @@
-use std::simd::prelude::*;
-
 regex!(MUL_INSTR = r"mul\((\d+),(\d+)\)");
 regex!(DO_INSTR = r"do(?:n't)?\(\)");
 

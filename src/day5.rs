@@ -73,7 +73,7 @@ impl<'a> Part2<'a> {
 
         for &x in update {
             let rules_x = rules_subset.entry(x).or_default();
-            rules_x.extend(rules[&x].intersection(&update_set));
+            rules_x.extend(rules[&x].intersection(update_set));
             for &y in rules_x.iter() {
                 rules_rev_subset.entry(y).or_default().insert(x);
                 no_incoming.remove(&y);

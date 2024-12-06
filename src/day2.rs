@@ -22,27 +22,24 @@ fn check(line: &[u32], ignore: Option<usize>) -> bool {
         x < y
     };
 
-    line.windows(2)
-        .enumerate()
-        .map(|(i, w)| {
-            let &[x, mut y] = w else { unreachable!() };
-            if Some(i) == ignore {
+    line.windows(2).enumerate().all(|(i, w)| {
+        let &[x, mut y] = w else { unreachable!() };
+        if Some(i) == ignore {
+            return true;
+        } else if Some(i + 1) == ignore {
+            if i + 1 == line.len() - 1 {
                 return true;
-            } else if Some(i + 1) == ignore {
-                if i + 1 == line.len() - 1 {
-                    return true;
-                }
-                y = line[i + 2];
             }
+            y = line[i + 2];
+        }
 
-            if (incr && x > y) || (!incr && x < y) {
-                return false;
-            }
+        if (incr && x > y) || (!incr && x < y) {
+            return false;
+        }
 
-            let diff = x.abs_diff(y);
-            1 <= diff && diff <= 3
-        })
-        .all(|x| x)
+        let diff = x.abs_diff(y);
+        (1..=3).contains(&diff)
+    })
 }
 
 #[aoc(day2, part1)]

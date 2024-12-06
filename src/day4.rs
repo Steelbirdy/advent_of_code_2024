@@ -36,7 +36,7 @@ pub fn part1(input: &str) -> u32 {
         .enumerate()
         .flat_map(|(y, line)| line.iter().enumerate().map(move |(x, &c)| (x, y, c)))
         .filter(|&(_, _, c)| c == 'X')
-        .flat_map(|(x, y, c)| lines_around1(x, y, xlen, ylen))
+        .flat_map(|(x, y, _)| lines_around1(x, y, xlen, ylen))
         .map(|[(x1, y1), (x2, y2), (x3, y3)]| {
             let is_xmas = lines[y1][x1] == 'M' && lines[y2][x2] == 'A' && lines[y3][x3] == 'S';
             is_xmas as u32
@@ -53,7 +53,7 @@ pub fn part2(input: &str) -> u32 {
         .enumerate()
         .flat_map(|(y, line)| line.iter().enumerate().map(move |(x, &c)| (x, y, c)))
         .filter(|&(x, y, c)| 0 < x && x < xlen - 1 && 0 < y && y < ylen - 1 && c == 'A')
-        .map(|(x, y, c)| {
+        .map(|(x, y, _)| {
             [
                 [(x - 1, y - 1), (x + 1, y + 1)],
                 [(x - 1, y + 1), (x + 1, y - 1)],

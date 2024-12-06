@@ -1,3 +1,5 @@
+use rayon::prelude::*;
+
 type Map = Vec<Vec<u8>>;
 
 #[derive(Copy, Clone)]
@@ -94,7 +96,7 @@ pub fn part1(map: &Map) -> u32 {
 
 #[aoc(day6, part2)]
 pub fn part2(map: &Map) -> u32 {
-    let mut map = map.clone();
+    let map = map.clone();
 
     let mut visited = crate::HashSet::default();
     let mut guard = Guard::new(&map).unwrap();
@@ -104,29 +106,36 @@ pub fn part2(map: &Map) -> u32 {
         guard.do_move(&map);
     }
 
-    let mut result = 0;
-    let mut history = vec![vec![History::default(); map[0].len()]; map.len()];
-    for (vx, vy) in visited {
-        if vx == starting_guard.pos.0 && vy == starting_guard.pos.1 {
-            continue;
-        }
-        map[vy][vx] = b'#';
-        let mut guard = starting_guard;
-        while guard.is_in_bounds(&map) {
-            let (x, y) = guard.pos;
-            let (dx, dy) = guard.dir;
-            if history[y][x].contains(dx, dy) {
-                result += 1;
-                break;
-            }
-            history[y][x].insert(dx, dy);
-            guard.do_move(&map);
-        }
-        map[vy][vx] = b'.';
-        history.iter_mut().flatten().for_each(|h| {
-            *h = History::default();
-        });
-    }
+    let init = move || {
+        let map = map.clone();
+        let history = vec![vec![History::default(); map[0].len()]; map.len()];
+        (map, history)
+    };
 
-    result
+    visited
+        .into_par_iter()
+        .map_init(init, |(map, history), (vx, vy)| {
+            if vx == starting_guard.pos.0 && vy == starting_guard.pos.1 {
+                return 0;
+            }
+            map[vy][vx] = b'#';
+            let mut guard = starting_guard;
+            let mut was_looped = false;
+            while guard.is_in_bounds(map) {
+                let (x, y) = guard.pos;
+                let (dx, dy) = guard.dir;
+                if history[y][x].contains(dx, dy) {
+                    was_looped = true;
+                    break;
+                }
+                history[y][x].insert(dx, dy);
+                guard.do_move(map);
+            }
+            map[vy][vx] = b'.';
+            history.iter_mut().flatten().for_each(|h| {
+                *h = History::default();
+            });
+            was_looped as _
+        })
+        .sum()
 }
