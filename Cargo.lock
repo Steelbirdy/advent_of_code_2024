@@ -8,7 +8,7 @@ version = "0.1.0"
 dependencies = [
  "aoc-runner",
  "aoc-runner-derive",
- "prse",
+ "itertools",
  "rayon",
  "regex",
  "rustc-hash",
@@ -85,9 +85,9 @@ checksum = "60b1af1c220855b6ceac025d3f6ecdd2b7c4894bfe9cd9bda4fbb4bc7c0d4cf0"
 
 [[package]]
 name = "itertools"
-version = "0.12.1"
+version = "0.13.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ba291022dbbd398a455acf126c1e341954079855bc60dfdda641363bd6922569"
+checksum = "413ee7dfc52ee1a4949ceeb7dbc8a33f2d6c088194d9f922fb8318faf1f01186"
 dependencies = [
  "either",
 ]
@@ -111,28 +111,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "37d3544b3f2748c54e147655edb5025752e2303145b5aefb3c3ea2c78b973bb0"
 dependencies = [
  "unicode-ident",
-]
-
-[[package]]
-name = "prse"
-version = "1.2.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "539f9a8af8a73d97bfc5431b23b73bc9502814ba9f171f7f16d8a7476c7d99ce"
-dependencies = [
- "memchr",
- "prse-derive",
-]
-
-[[package]]
-name = "prse-derive"
-version = "1.1.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c1162e568f36938611f2fb441cb68897876d9d9cee9a577e69b8253e66a026ee"
-dependencies = [
- "itertools",
- "proc-macro2",
- "quote",
- "syn 2.0.90",
 ]
 
 [[package]]
