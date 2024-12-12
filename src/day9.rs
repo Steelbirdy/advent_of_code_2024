@@ -1,7 +1,5 @@
-type Input = Vec<u8>;
-
 #[aoc_generator(day9)]
-pub fn generator(input: &str) -> Input {
+pub fn generator(input: &str) -> Vec<u8> {
     input.bytes().map(|b| b - b'0').collect()
 }
 
@@ -15,7 +13,7 @@ fn compute(ptr: usize, index: u64, count: u64) -> u64 {
 }
 
 #[aoc(day9, part1)]
-pub fn part1(input: &Input) -> u64 {
+pub fn part1(input: &[u8]) -> u64 {
     let mut res = 0;
     let mut index = 0;
     let (mut front_ptr, mut back_ptr) = (0, input.len() + 1);
@@ -59,9 +57,70 @@ struct Block {
     id: Option<u64>,
 }
 
-// TODO: Find an analogue to part1's efficient algorithm for this
 #[aoc(day9, part2)]
-pub fn part2(input: &Input) -> u64 {
+pub fn part2(input: &[u8]) -> u64 {
+    // part2_inefficient(input)
+    part2_efficient(input)
+}
+
+fn part2_efficient(input: &[u8]) -> u64 {
+    let mut input = input.to_vec();
+
+    let mut indices = input
+        .iter()
+        .fold(Vec::new(), |mut acc, &size| {
+            let last = acc.last().copied().unwrap_or(0_u64);
+            acc.push(last + size as u64);
+            acc
+        });
+
+    let mut res = 0;
+    let mut ptr = input.len() + 1;
+
+    while ptr > 2 {
+        ptr -= 2;
+        let size = input[ptr];
+
+        let Some(next_empty_slot) = input[1..ptr]
+            .iter()
+            .step_by(2)
+            .position(|&b| b >= size)
+        else {
+            res += compute(ptr, indices[ptr], size as _);
+            continue;
+        };
+        let next_empty_slot = next_empty_slot * 2 + 1;
+        res += compute(next_empty_slot, indices[next_empty_slot], size as _);
+        input[next_empty_slot] -= size;
+        indices[next_empty_slot] += size as u64;
+
+        for (i, size) in
+ // TODO: Print out to debug
+        // let count = input[front_ptr] as u64;
+        // res += compute(front_ptr, index, count);
+        // index += count;
+        // front_ptr += 1;
+        // let mut empty_space = input[front_ptr] as u64;
+        // while empty_space != 0 {
+        //     if back_count == 0 {
+        //         back_ptr -= 2;
+        //         back_count = input[back_ptr] as u64;
+        //     }
+        //     if empty_space >= back_count {
+        //         res += compute(back_ptr, index, back_count);
+        //         index += back_count;
+        //         empty_space -= back_count;
+        //         back_count = 0;
+        //     }
+        // }
+        // front_ptr += 1;
+    }
+
+
+    res
+}
+
+fn part2_inefficient(input: &[u8]) -> u64 {
     let mut files = Vec::new();
     files.push(Block {
         size: input[0] as u64,
